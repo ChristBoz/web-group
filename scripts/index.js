@@ -87,6 +87,7 @@ function renderGenreFilters() {
   const allChip = document.createElement("div");
   allChip.className = "genre-chip active";
   allChip.dataset.genre = "";
+  allChip.dataset.categorySlug = "";
   allChip.textContent = "All Events";
   allChip.addEventListener("click", () => {
     selectGenre("");
@@ -97,6 +98,7 @@ function renderGenreFilters() {
     const chip = document.createElement("div");
     chip.className = "genre-chip";
     chip.dataset.genre = genre.slug || genre.name;
+    chip.dataset.categorySlug = genre.slug || genre.name;
     // text-only rendering
     const labelSpan = document.createElement("span");
     labelSpan.textContent = genre.name;
@@ -109,7 +111,7 @@ function renderGenreFilters() {
   });
 }
 
-// Select genre, update UI, reload events
+// Select genre, update UI, filter events client-side
 function selectGenre(genreSlug) {
   selectedGenre = genreSlug || "";
 
@@ -127,13 +129,25 @@ function selectGenre(genreSlug) {
     heading.textContent = "All Events";
   }
 
-  loadEvents();
+  // Use client-side filtering instead of server reload
+  if (window.EventFilter) {
+    window.EventFilter.filter(selectedGenre);
+  }
 }
 
 // Create event card element (no emoji/icon output)
 function createEventCard(event) {
   const card = document.createElement("div");
   card.className = "event-card";
+  
+  // Add data attributes for client-side filtering
+  if (event.genre_slug) {
+    card.dataset.eventSlug = event.genre_slug;
+    card.dataset.genre = event.genre_slug;
+  }
+  if (event.genre_name) {
+    card.dataset.type = event.genre_name;
+  }
 
   const title = event.name || event.title || "Untitled Event";
   const location = event.location || "Location TBA";
@@ -279,6 +293,11 @@ function renderEvents() {
 
   container.innerHTML = "";
   allEvents.forEach((event) => container.appendChild(createEventCard(event)));
+  
+  // Apply client-side filter if a genre is selected
+  if (window.EventFilter && selectedGenre) {
+    window.EventFilter.filter(selectedGenre);
+  }
 }
 
 // Load favorites
