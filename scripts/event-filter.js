@@ -49,13 +49,13 @@
   function getCategorySlug(button) {
     if (!button) return '';
     
-    // Prefer explicit slug attribute
-    if (button.dataset.categorySlug) {
+    // Prefer explicit slug attribute (check existence, not truthiness - empty string is valid)
+    if ('categorySlug' in button.dataset) {
       return normalizeString(button.dataset.categorySlug);
     }
     
     // Try genre attribute (existing in the codebase)
-    if (button.dataset.genre) {
+    if ('genre' in button.dataset) {
       return normalizeString(button.dataset.genre);
     }
     
@@ -107,12 +107,29 @@
     
     const eventTypes = getEventTypes(eventElement);
     const normalizedCategory = normalizeString(categorySlug);
+    // Also create a version without spaces for flexible matching
+    const categoryNoSpaces = normalizedCategory.replace(/\s+/g, '');
     
     // Check if any event type matches the category
     return eventTypes.some(type => {
-      return type === normalizedCategory || 
-             type.includes(normalizedCategory) ||
-             normalizedCategory.includes(type);
+      const typeNoSpaces = type.replace(/\s+/g, '');
+      
+      // Exact match (with or without spaces)
+      if (type === normalizedCategory || typeNoSpaces === categoryNoSpaces) {
+        return true;
+      }
+      
+      // Partial match (contains)
+      if (type.includes(normalizedCategory) || normalizedCategory.includes(type)) {
+        return true;
+      }
+      
+      // Partial match without spaces
+      if (typeNoSpaces.includes(categoryNoSpaces) || categoryNoSpaces.includes(typeNoSpaces)) {
+        return true;
+      }
+      
+      return false;
     });
   }
 
