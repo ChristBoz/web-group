@@ -143,7 +143,6 @@ function createEventCard(event) {
   // Add data attributes for client-side filtering
   if (event.genre_slug) {
     card.dataset.eventSlug = event.genre_slug;
-    card.dataset.genre = event.genre_slug;
   }
   if (event.genre_name) {
     card.dataset.type = event.genre_name;
@@ -241,6 +240,8 @@ async function loadEvents() {
 
   try {
     const params = new URLSearchParams();
+    // Optional: send genre to server for initial filtering efficiency
+    // Client-side filtering will be applied after rendering anyway
     if (selectedGenre) params.append("genre", selectedGenre);
 
     const date = document.getElementById("filter-date")?.value;
@@ -457,6 +458,7 @@ function setupEventListeners() {
     document
       .querySelectorAll(".genre-chip")
       .forEach((ch) => ch.classList.toggle("active", ch.dataset.genre === ""));
+    // Reload from server (clears all filters including advanced ones)
     loadEvents();
   });
 
@@ -471,5 +473,7 @@ function setupEventListeners() {
 
 function applyFilters() {
   selectedGenre = selectedGenre || "";
+  // Reload from server with advanced filters (date, location, price, etc.)
+  // After loading, client-side genre filter will be applied in renderEvents()
   loadEvents();
 }
