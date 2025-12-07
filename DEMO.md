@@ -1,11 +1,11 @@
-DEMO — Event Finder (5–7 minute script)
+DEMO — Lawen (5–7 minute script)
 
 Goal: demonstrate core flows, architecture, and lessons learned.
 
 1. Opening (30s)
 
 - Quick project name and team members.
-- One-line elevator: "Event Finder helps users discover nearby events and lets admins manage event listings."
+- One-line elevator: "Lawen helps users discover nearby events and lets admins manage event listings."
 
 2. Architecture (60s)
 

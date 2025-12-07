@@ -180,9 +180,12 @@ function createEventCard(event) {
   const h4 = document.createElement("h4");
   h4.textContent = title;
 
+  // Include distance in the event description if available
+  // Distance is automatically calculated when user grants location permission
+  const distanceText = event.distance_km ? ` • ${event.distance_km} km away` : "";
   const infoP = document.createElement("p");
   infoP.className = "event-info";
-  infoP.textContent = `${location} • ${date} ${time}`;
+  infoP.textContent = `${location} • ${date} ${time}${distanceText}`;
 
   const genresDiv = document.createElement("div");
   genresDiv.className = "event-genres";
@@ -192,10 +195,6 @@ function createEventCard(event) {
     tag.textContent = event.genre_name;
     genresDiv.appendChild(tag);
   }
-
-  const distance = event.distance_km
-    ? `<p class="event-distance">📍 ${event.distance_km} km away</p>`
-    : "";
 
   const actionsDiv = document.createElement("div");
   actionsDiv.className = "card-actions";
@@ -222,11 +221,6 @@ function createEventCard(event) {
   card.appendChild(preview);
   card.appendChild(h4);
   card.appendChild(infoP);
-  if (distance) {
-    const ddiv = document.createElement("div");
-    ddiv.innerHTML = distance;
-    card.appendChild(ddiv);
-  }
   card.appendChild(genresDiv);
   card.appendChild(actionsDiv);
 
@@ -366,18 +360,42 @@ window.viewEventDetails = function (eventId) {
   window.location.href = `/web-proj/event.html?id=${eventId}`;
 };
 
-// Geolocation
+/**
+ * Geolocation API - Automatically gets user's location to show event distances
+ * 
+ * How it works:
+ * 1. The browser's Geolocation API (navigator.geolocation) requests the user's location
+ * 2. User must grant permission via browser prompt for privacy/security
+ * 3. If granted, the API returns latitude and longitude coordinates
+ * 4. These coordinates are sent to the server with event requests
+ * 5. Server calculates distance between user and each event using the Haversine formula:
+ *    - Treats Earth as a sphere
+ *    - Calculates great-circle distance between two points (user & event)
+ *    - Returns distance in kilometers
+ * 6. Distance is automatically displayed in event cards (e.g., "5.2 km away")
+ * 7. If permission denied, events still load but without distance information
+ * 
+ * The distance calculation happens on every page load to ensure accuracy
+ * even if the user has moved since their last visit.
+ */
 function getUserLocation() {
+  // Check if browser supports Geolocation API (all modern browsers do)
   if (navigator.geolocation) {
+    // Request user's current position
     navigator.geolocation.getCurrentPosition(
+      // Success callback: executed when user grants permission
       (position) => {
+        // Store user's coordinates for use in event requests
         userLocation = {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
+          lat: position.coords.latitude,  // North/South position (-90 to 90)
+          lng: position.coords.longitude, // East/West position (-180 to 180)
         };
+        // Reload events with location data to get distances
         loadEvents();
       },
+      // Error callback: executed if permission denied or error occurs
       (error) => {
+        // Events still load, just without distance information
         console.log("Location access denied:", error);
       }
     );

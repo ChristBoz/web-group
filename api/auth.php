@@ -1,7 +1,7 @@
 <?php
 /**
  * Authentication and Authorization Helper
- * Handles user role checks and permissions for Event Finder
+ * Handles user role checks and permissions for Lawen
  */
 
 class Auth {

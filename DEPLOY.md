@@ -1,6 +1,6 @@
-Event Finder — Deployment Guide
+Lawen — Deployment Guide
 
-This document summarizes recommended deployment options for the Event Finder project (PHP + MySQL). It assumes the repository contains the current codebase and `api/schema.sql`.
+This document summarizes recommended deployment options for the Lawen project (PHP + MySQL). It assumes the repository contains the current codebase and `api/schema.sql`.
 
 Security note
 
