@@ -89,7 +89,7 @@ async function handleDeleteAccount() {
   if (!confirm1) return;
 
   const confirm2 = confirm(
-    "Final confirmation: ALL your data on Event Finder will be removed. Continue?"
+    "Final confirmation: ALL your data on Lawen will be removed. Continue?"
   );
   if (!confirm2) return;
 

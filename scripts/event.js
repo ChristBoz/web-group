@@ -138,7 +138,7 @@ function renderEvent() {
 
   updateRegisterButton();
 
-  document.title = `${event.title || "Event"} | Event Finder`;
+  document.title = `${event.title || "Event"} | Lawen`;
 }
 
 function resetButton(id) {

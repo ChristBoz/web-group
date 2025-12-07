@@ -1,4 +1,4 @@
-# Event Finder — Local PHP API & Frontend
+# Lawen — Local PHP API & Frontend
 
 Last updated: 2025-11-25
 
